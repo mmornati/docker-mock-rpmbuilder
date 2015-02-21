@@ -16,7 +16,7 @@ In this folder you can put the src.rpms to rebuild.
 To execute the docker container you can run it in this way:
 
 ```bash
-docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder --privileged=true
+docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
 ```
 
 > NB: It's important to run the container with privileged rights because mock needs the "unshare" system call to create a
