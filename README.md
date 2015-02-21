@@ -86,6 +86,30 @@ totale 188
 -rw-rw-r--. 1 1000 1000    962 21 feb 10:34 state.log
 ```
 
+## Output
+
+If all worked well, you should have all the RPMs (source + binaries) availables in the configured output folder:
+
+```bash
+[root@server ~]# ll /tmp/rpmbuild/output/
+totale 28076
+-rw-rw-r--. 1 1000 1000   117010 21 feb 10:40 build.log
+-rw-rw-r--. 1 1000 mock  7941092 21 feb 10:39 git-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock  5193722 21 feb 10:33 git-2.3.0-1.el6.src.rpm
+-rw-rw-r--. 1 1000 mock     5472 21 feb 10:39 git-all-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock    24540 21 feb 10:39 git-arch-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock    90668 21 feb 10:39 git-cvs-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock 14123468 21 feb 10:40 git-debuginfo-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock    37600 21 feb 10:39 git-email-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock   240400 21 feb 10:39 git-gui-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock   148940 21 feb 10:39 gitk-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock   437148 21 feb 10:39 git-svn-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock   145996 21 feb 10:39 gitweb-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 mock    67256 21 feb 10:39 perl-Git-2.3.0-1.el6.i686.rpm
+-rw-rw-r--. 1 1000 1000   147267 21 feb 10:40 root.log
+-rw-rw-r--. 1 1000 1000     1248 21 feb 10:40 state.log
+```
+
 ## TODOs
 
 * Fix right problem (to execute container without root privileges)
