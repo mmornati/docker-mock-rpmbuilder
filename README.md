@@ -11,13 +11,26 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
-## Execute the container to rebuild packages
+## Execute the container to rebuild source package
 
-To execute the docker container you can run it in this way:
+To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
 docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
 ```
+
+If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
+
+```bash
+docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
+```
+
+It is importanto to know:
+
+* With spec file the build processus could be longer. The reason is mock it is invoked 2 times: the first to build SRPM the second to build all other RPMS.
+* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subolder should be added too. (SOURCES in my example)
+
+
 
 > NB: It's important to run the container with privileged rights because mock needs the "unshare" system call to create a
 > new mountpoint inside the process.
@@ -36,8 +49,8 @@ default        epel-7-x86_64     fedora-19-x86_64  fedora-20-x86_64   fedora-21-
 epel-5-i386    fedora-19-armhfp  fedora-20-armhfp  fedora-21-aarch64  fedora-21-x86_64        fedora-rawhide-s390x
 epel-5-ppc     fedora-19-i386    fedora-20-i386    fedora-21-armhfp   fedora-rawhide-aarch64  fedora-rawhide-sparc
 epel-5-x86_64  fedora-19-ppc64   fedora-20-ppc64   fedora-21-i386     fedora-rawhide-armhfp   fedora-rawhide-x86_64
-epel-6-i386    fedora-19-ppc     fedora-20-ppc     fedora-21-ppc64    fedora-rawhide-i386     logging.ini
-epel-6-ppc64   fedora-19-s390    fedora-20-s390    fedora-21-ppc64le  fedora-rawhide-ppc64    site-defaults
+epel-6-i386    fedora-19-ppc     fedora-20-ppc     fedora-21-ppc64    fedora-rawhide-i386     
+epel-6-ppc64   fedora-19-s390    fedora-20-s390    fedora-21-ppc64le  fedora-rawhide-ppc64    
 epel-6-x86_64  fedora-19-s390x   fedora-20-s390x   fedora-21-s390     fedora-rawhide-ppc64le
 ```
 
@@ -113,4 +126,3 @@ totale 28076
 ## TODOs
 
 * Fix right problem (to execute container without root privileges)
-* Improve build script to allow the build of spec+sources
