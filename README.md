@@ -41,6 +41,41 @@ epel-6-ppc64   fedora-19-s390    fedora-20-s390    fedora-21-ppc64le  fedora-raw
 epel-6-x86_64  fedora-19-s390x   fedora-20-s390x   fedora-21-s390     fedora-rawhide-ppc64le
 ```
 
+## Check build state
+
+To check the rpmbuild progress (and/or errors) you can simply check docker logs.
+
+```bash
+[root@server docker-mock-rpmbuilder]# docker ps
+CONTAINER ID        IMAGE                            COMMAND             CREATED             STATUS              PORTS               NAMES
+f8d161e72832        mmornati/mockrpmbuilder:latest   "/build-rpm.sh"     2 seconds ago       Up 1 seconds                            modest_bardeen
+[root@server docker-mock-rpmbuilder]# docker logs -f f8d161e72832
+=> Building parameters:
+========================================================================
+      MOCK_CONFIG:    epel-6-i386
+      SOURCE_RPM:     git-2.3.0-1.el7.centos.src.rpm
+========================================================================
+INFO: mock.py version 1.2.6 starting (python version = 2.7.5)...
+Start: init plugins
+INFO: selinux disabled
+Finish: init plugins
+Start: run
+INFO: Start(/rpmbuild/git-2.3.0-1.el7.centos.src.rpm)  Config(epel-6-i386)
+Start: clean chroot
+Finish: clean chroot
+Start: chroot init
+INFO: calling preinit hooks
+INFO: enabled root cache
+INFO: enabled yum cache
+Start: cleaning yum metadata
+Finish: cleaning yum metadata
+INFO: enabled ccache
+Mock Version: 1.2.6
+INFO: Mock Version: 1.2.6
+Start: yum install
+[....]
+```
+
 ## TODOs
 
 * Fix right problem (to execute container without root privileges)
