@@ -22,7 +22,9 @@ docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.sr
 > NB: It's important to run the container with privileged rights because mock needs the "unshare" system call to create a
 > new mountpoint inside the process.
 > Withour this you will get this error:
+>
 >  ERROR: Namespace unshare failed.
+>
 > A different solution (which didn't worked for me right now) should be to change the lxc-configuration to allow docker the right admin just for this operation.
 > With this command: setcap cap_sys_admin+ep
 > But I didn't find the right way to execute it (any hint is welcome) :)
