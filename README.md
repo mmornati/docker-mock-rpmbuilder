@@ -11,7 +11,7 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
-## Execute the container to rebuild source package
+## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
