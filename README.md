@@ -76,6 +76,16 @@ Start: yum install
 [....]
 ```
 
+And use Mock log files, that are created in the outputdir:
+
+```bash
+[root@server ~]# ll /tmp/rpmbuild/output/
+totale 188
+-rw-rw-r--. 1 1000 1000  40795 21 feb 10:37 build.log
+-rw-rw-r--. 1 1000 1000 144994 21 feb 10:34 root.log
+-rw-rw-r--. 1 1000 1000    962 21 feb 10:34 state.log
+```
+
 ## TODOs
 
 * Fix right problem (to execute container without root privileges)
