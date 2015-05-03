@@ -11,6 +11,8 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
+This folder will also store mock cache directories that allow to speed up repeated build
+
 ## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
