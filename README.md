@@ -11,36 +11,32 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
+## Build the container locally
+
+First you need to build the container, which we will call "mmornati/mockrpmbuilder":
+
+```bash
+docker build -t mmornati/mockrpmbuilder <path to git repo>
+```
 ## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
-docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
+docker run --cap-add=sys_admin -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
+docker run --cap-add=sys_admin -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
-It is importanto to know:
+It is important to know:
 
-* With spec file the build processus could be longer. The reason is mock it is invoked 2 times: the first to build SRPM the second to build all other RPMS.
-* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subolder should be added too. (SOURCES in my example)
+* With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
+* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subfolder should be added too. (See SOURCES in my example)
 
-
-
-> NB: It's important to run the container with privileged rights because mock needs the "unshare" system call to create a
-> new mountpoint inside the process.
-> Withour this you will get this error:
->
->  ERROR: Namespace unshare failed.
->
-> A different solution (which didn't worked for me right now) should be to change the lxc-configuration to allow docker the right admin just for this operation.
-> With this command: setcap cap_sys_admin+ep
-> But I didn't find the right way to execute it (any hint is welcome) :)
 
 ## Allowed configurations
 
@@ -125,4 +121,4 @@ totale 28076
 
 ## TODOs
 
-* Fix right problem (to execute container without root privileges)
+* None right now
