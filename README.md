@@ -15,10 +15,18 @@ This folder will also store mock cache directories that allow to speed up repeat
 
 ## Build the container locally
 
-First you need to build the container, which we will call "mmornati/mockrpmbuilder":
+First you need to build the container, which we will call "mmornati/mock-rpmbuilder":
  
 ```bash
-docker build -t mmornati/mockrpmbuilder <path to git repo>
+docker build -t mmornati/mock-rpmbuilder <path to git repo>
+```
+
+## Download latest version of the image from Docker Hub
+
+This git repository are actually linked with Docker Hub Automatic build system. Any new commit here will produce a new version build. You can now simply pull the latest image build.
+ 
+```bash
+docker pull mmornati/mock-rpmbuilder
 ```
 
 ## Execute the container to build RPMs
