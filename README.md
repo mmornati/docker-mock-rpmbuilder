@@ -13,13 +13,13 @@ In this folder you can put the src.rpms to rebuild.
 
 This folder will also store mock cache directories that allow to speed up repeated build
 
- ## Build the container locally
+## Build the container locally
+
+First you need to build the container, which we will call "mmornati/mockrpmbuilder":
  
- First you need to build the container, which we will call "mmornati/mockrpmbuilder":
- 
- ```bash
- docker build -t mmornati/mockrpmbuilder <path to git repo>
- ```
+```bash
+docker build -t mmornati/mockrpmbuilder <path to git repo>
+```
 
 ## Execute the container to build RPMs
 
