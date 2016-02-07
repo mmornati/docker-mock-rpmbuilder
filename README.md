@@ -11,6 +11,7 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
+<<<<<<< HEAD
 This folder will also store mock cache directories that allow to speed up repeated build
 
  ## Build the container locally
@@ -21,12 +22,22 @@ This folder will also store mock cache directories that allow to speed up repeat
  docker build -t mmornati/mockrpmbuilder <path to git repo>
  ```
 
+=======
+## Build the container locally
+
+First you need to build the container, which we will call "mmornati/mockrpmbuilder":
+
+```bash
+docker build -t mmornati/mockrpmbuilder <path to git repo>
+```
+>>>>>>> c3f47343efd4484131af5fd254f3e51cb7414a78
 ## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
 docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=sys_admin -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
@@ -36,11 +47,9 @@ docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/
 ```
 
 It is important to know:
-  
- * With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
- * The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subfolder should be added too. (See SOURCES in my example)
 
-
+* With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
+* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subfolder should be added too. (See SOURCES in my example)
 
 > NB: It's important to run the container with privileged rights because mock needs the "unshare" system call to create a
 > new mountpoint inside the process.
@@ -50,6 +59,7 @@ It is important to know:
 >
 > If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
 > Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
+=======
 
 ## Allowed configurations
 
