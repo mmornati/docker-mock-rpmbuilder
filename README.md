@@ -11,7 +11,6 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
-<<<<<<< HEAD
 This folder will also store mock cache directories that allow to speed up repeated build
 
  ## Build the container locally
@@ -22,15 +21,6 @@ This folder will also store mock cache directories that allow to speed up repeat
  docker build -t mmornati/mockrpmbuilder <path to git repo>
  ```
 
-=======
-## Build the container locally
-
-First you need to build the container, which we will call "mmornati/mockrpmbuilder":
-
-```bash
-docker build -t mmornati/mockrpmbuilder <path to git repo>
-```
->>>>>>> c3f47343efd4484131af5fd254f3e51cb7414a78
 ## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
@@ -59,7 +49,6 @@ It is important to know:
 >
 > If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
 > Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
-=======
 
 ## Allowed configurations
 

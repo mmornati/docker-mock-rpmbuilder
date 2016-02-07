@@ -34,6 +34,7 @@ if [ ! -z "$HTTP_PROXY" ] || [ ! -z "$http_proxy" ]; then
         cp /etc/mock/$MOCK_CONFIG.cfg /tmp/$MOCK_CONFIG.cfg
         sed s/\\[main\\]/\[main\]\\\nproxy=$TEMP_PROXY/g /tmp/$MOCK_CONFIG.cfg > /etc/mock/$MOCK_CONFIG.cfg
 fi
+
 OUTPUT_FOLDER=${OUTPUT_FOLDER}/${MOCK_CONFIG}
 if [ ! -d "$OUTPUT_FOLDER" ]; then
         mkdir -p $OUTPUT_FOLDER
