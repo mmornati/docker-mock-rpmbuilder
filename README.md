@@ -134,3 +134,8 @@ totale 28076
 
 ## Contributions
 Updated and fixed with contributions by [csmart](https://github.com/csmart/docker-mock-rpmbuilder/commit/c3f47343efd4484131af5fd254f3e51cb7414a78) and [llicour](https://github.com/llicour/docker-mock-rpmbuilder/commit/6a5b169860b3b42f10a7c7771d1342dd7c78359b)
+
+## Docker HUB
+This repository is automatically linked to Docker Hub. [https://hub.docker.com/r/mmornati/mock-rpmbuilder/](https://hub.docker.com/r/mmornati/mock-rpmbuilder/).
+
+Any new commit and contribution will automatically force a build on DockerHub to have the latest version of the container ready to use.
