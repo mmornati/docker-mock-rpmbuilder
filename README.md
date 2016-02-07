@@ -11,24 +11,34 @@ chown -R 1000:1000 /tmp/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
+This folder will also store mock cache directories that allow to speed up repeated build
+
+ ## Build the container locally
+ 
+ First you need to build the container, which we will call "mmornati/mockrpmbuilder":
+ 
+ ```bash
+ docker build -t mmornati/mockrpmbuilder <path to git repo>
+ ```
+
 ## Execute the container to build RPMs
 
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
-docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild --privileged=true mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
-It is importanto to know:
-
-* With spec file the build processus could be longer. The reason is mock it is invoked 2 times: the first to build SRPM the second to build all other RPMS.
-* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subolder should be added too. (SOURCES in my example)
+It is important to know:
+  
+ * With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
+ * The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point you need to specify only the file name, otherwise the subfolder should be added too. (See SOURCES in my example)
 
 
 
@@ -38,9 +48,8 @@ It is importanto to know:
 >
 >  ERROR: Namespace unshare failed.
 >
-> A different solution (which didn't worked for me right now) should be to change the lxc-configuration to allow docker the right admin just for this operation.
-> With this command: setcap cap_sys_admin+ep
-> But I didn't find the right way to execute it (any hint is welcome) :)
+> If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
+> Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
 
 ## Allowed configurations
 
@@ -123,6 +132,5 @@ totale 28076
 -rw-rw-r--. 1 1000 1000     1248 21 feb 10:40 state.log
 ```
 
-## TODOs
-
-* Fix right problem (to execute container without root privileges)
+## Contributions
+Updated and fixed with contributions by [csmart](https://github.com/csmart/docker-mock-rpmbuilder/commit/c3f47343efd4484131af5fd254f3e51cb7414a78) and [llicour](https://github.com/llicour/docker-mock-rpmbuilder/commit/6a5b169860b3b42f10a7c7771d1342dd7c78359b)
