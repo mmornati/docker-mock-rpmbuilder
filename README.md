@@ -16,7 +16,7 @@ This folder will also store mock cache directories that allow to speed up repeat
 ## Build the container locally
 
 First you need to build the container, which we will call "mmornati/mock-rpmbuilder":
- 
+
 ```bash
 docker build -t mmornati/mock-rpmbuilder <path to git repo>
 ```
@@ -24,7 +24,7 @@ docker build -t mmornati/mock-rpmbuilder <path to git repo>
 ## Download latest version of the image from Docker Hub
 
 This git repository are actually linked with Docker Hub Automatic build system. Any new commit here will produce a new version build. You can now simply pull the latest image build.
- 
+
 ```bash
 docker pull mmornati/mock-rpmbuilder
 ```
@@ -35,7 +35,6 @@ To execute the docker container and rebuild RPMs four SRPMs you can run it in th
 
 ```bash
 docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
-docker run --cap-add=sys_admin -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
@@ -57,6 +56,15 @@ It is important to know:
 >
 > If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
 > Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
+
+## Execute without cleanup of Mock CHROOT folder
+
+To speedup build, as suggested by [llicour](https://github.com/llicour), we can prevent the cleanup of the Mock chroot folder.
+We can enable it simply by passing a new parameter (NO_CLEANUP) to the build command:
+
+```bash
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+```
 
 ## Allowed configurations
 

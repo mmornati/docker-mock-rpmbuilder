@@ -19,6 +19,9 @@ if [ -z "$SOURCE_RPM" ] && [ -z "$SPEC_FILE" ]; then
         echo "Set SOURCE_RPM or SPEC_FILE environment variables"
         exit 1
 fi
+if [ ! -z "$NO_CLEANUP" ]; then
+        echo "WARNING: Disabling clean up of the build folder after build."
+fi
 
 #If proxy env variable is set, add the proxy value to the configuration file
 if [ ! -z "$HTTP_PROXY" ] || [ ! -z "$http_proxy" ]; then
@@ -54,7 +57,13 @@ if [ ! -z "$SOURCE_RPM" ]; then
         echo "      SOURCE_RPM:     $SOURCE_RPM"
         echo "      OUTPUT_FOLDER:  $OUTPUT_FOLDER"
         echo "========================================================================"
-        $MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER
+        if [ ! -z "$NO_CLEANUP" ]; then
+          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean"
+          $MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean
+        else
+          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER"
+          $MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER
+        fi
 elif [ ! -z "$SPEC_FILE" ]; then
         if [ -z "$SOURCES" ]; then
                 echo "You need to specify SOURCES env variable pointing to folder or sources file (only when building with SPEC_FILE)"
@@ -64,9 +73,18 @@ elif [ ! -z "$SPEC_FILE" ]; then
         echo "      SOURCES:       $SOURCES"
         echo "      OUTPUT_FOLDER: $OUTPUT_FOLDER"
         echo "========================================================================"
-        # do not cleanup chroot between both mock calls as 1st does not alter it
-        $MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after
-        $MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER --no-clean
+        if [ ! -z "$NO_CLEANUP" ]; then
+          # do not cleanup chroot between both mock calls as 1st does not alter it
+          echo "$MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after"
+          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER --no-clean"
+          $MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after
+          $MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER --no-clean
+        else
+          echo "$MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER"
+          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER"
+          $MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER
+          $MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER
+        fi
 fi
 
 echo "Build finished. Check results inside the mounted volume folder."
