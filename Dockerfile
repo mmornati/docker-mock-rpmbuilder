@@ -1,10 +1,9 @@
 FROM centos:centos7
 MAINTAINER Marco Mornati <marco@mornati.net>
 
-RUN rpm -ivh http://fr2.rpmfind.net/linux/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-
 RUN yum clean all
 RUN yum -y update
+RUN yum -y insall epel-release
 
 #Install Mock Package
 RUN yum -y install mock 
