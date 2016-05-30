@@ -1,8 +1,7 @@
 FROM centos:centos7
 MAINTAINER Marco Mornati <marco@mornati.net>
 
-RUN rpm -ivh http://fr2.rpmfind.net/linux/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-
+RUN yum -y install epel-release
 RUN yum clean all
 RUN yum -y update
 
