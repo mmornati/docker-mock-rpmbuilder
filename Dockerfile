@@ -3,7 +3,7 @@ MAINTAINER Marco Mornati <marco@mornati.net>
 
 RUN yum clean all
 RUN yum -y update
-RUN yum -y insall epel-release
+RUN yum -y install epel-release
 
 #Install Mock Package
 RUN yum -y install mock 
@@ -13,6 +13,8 @@ RUN useradd -u 1000 builder
 RUN usermod -a -G mock builder
 
 VOLUME ["/rpmbuild"]
+
+ONBUILD COPY mock /etc/mock
 
 # create mock cache on external volume to speed up build
 RUN install -g mock -m 2775 -d /rpmbuild/cache/mock
