@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mmornati/docker-mock-rpmbuilder.svg)](https://travis-ci.org/mmornati/docker-mock-rpmbuilder)
+
 # docker-mock-rpmbuilder
 Build RPMs using the Mock Project (for any platform)
 
