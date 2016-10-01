@@ -10,7 +10,7 @@ install:
 # Assist with ci test debugging:
 #   - DEBUG=1
 before_script:
-    - image="mmornati/docker-mock-rpmbuilder"
+    - image="mmornati/mock-rpmbuilder"
     - if [ -n "$TRAVIS_TAG" ]; then
       image="$image:$TRAVIS_TAG";
       fi
