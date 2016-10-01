@@ -11,6 +11,9 @@ install:
 #   - DEBUG=1
 before_script:
     - image="mmornati/docker-mock-rpmbuilder"
+    - if [ -n "$TRAVIS_TAG" ]; then
+      image="$image:$TRAVIS_TAG";
+      fi
     - docker build -t "$image" .
     - docker inspect "$image"
     - docker run --rm "$image" /usr/sbin/mock --version
@@ -19,3 +22,9 @@ script:
 
 after_script:
     - docker images
+
+after_success:
+  - if [ -n "$TRAVIS_TAG" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push "$image";
+    fi
