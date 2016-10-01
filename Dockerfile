@@ -3,7 +3,7 @@ MAINTAINER Marco Mornati <marco@mornati.net>
 
 RUN yum clean all
 RUN yum -y update
-RUN yum -y insall epel-release
+RUN yum -y install epel-release
 
 #Install Mock Package
 RUN yum -y install mock 
