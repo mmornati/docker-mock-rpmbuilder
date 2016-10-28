@@ -3,10 +3,10 @@ MAINTAINER Marco Mornati <marco@mornati.net>
 
 RUN yum clean all
 RUN yum -y update
-RUN yum -y insall epel-release
+RUN yum -y install epel-release
 
 #Install Mock Package
-RUN yum -y install mock 
+RUN yum -y install mock
 
 #Configure users
 RUN useradd -u 1000 builder
@@ -22,6 +22,7 @@ ADD ./build-rpm.sh /build-rpm.sh
 RUN chmod +x /build-rpm.sh
 #RUN setcap cap_sys_admin+ep /usr/sbin/mock
 
-USER builder
+USER root
 ENV HOME /home/builder
 CMD ["/build-rpm.sh"]
+

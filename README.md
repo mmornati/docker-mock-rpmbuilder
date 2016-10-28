@@ -43,6 +43,11 @@ If you don't have the source RPMs yet, but you get spec file + sources, to build
 docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
+The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces. 
+
+```bash
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+```
 It is important to know:
 
 * With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
