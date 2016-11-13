@@ -14,6 +14,8 @@ RUN usermod -a -G mock builder
 
 VOLUME ["/rpmbuild"]
 
+ONBUILD COPY mock /etc/mock
+
 # create mock cache on external volume to speed up build
 RUN install -g mock -m 2775 -d /rpmbuild/cache/mock
 RUN echo "config_opts['cache_topdir'] = '/rpmbuild/cache/mock'" >> /etc/mock/site-defaults.cfg
