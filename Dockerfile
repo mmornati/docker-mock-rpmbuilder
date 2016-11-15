@@ -6,7 +6,7 @@ RUN yum -y update
 RUN yum -y install epel-release
 
 #Install Mock Package
-RUN yum -y install mock 
+RUN yum -y install mock
 
 #Configure users
 RUN useradd -u 1000 builder
@@ -27,3 +27,4 @@ RUN chmod +x /build-rpm.sh
 USER builder
 ENV HOME /home/builder
 CMD ["/build-rpm.sh"]
+

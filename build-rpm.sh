@@ -1,10 +1,22 @@
 #!/bin/bash
-
 MOCK_BIN=/usr/bin/mock
 MOCK_CONF_FOLDER=/etc/mock
 MOUNT_POINT=/rpmbuild
 OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
+MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
+DEF_SIZE=${#MOCK_DEFINES[@]}
+
+if [ $DEF_SIZE -gt 0 ];
+then
+  for ((i=0; i<$DEF_SIZE; i++));
+  do
+    #MOCK_DEFINES{$i}=$(echo ${MOCK_DEFINES[$i]} |sed 's/=/ /g')
+    DEFINE_CMD+="--define '$(echo ${MOCK_DEFINES[$i]} |sed 's/=/ /g')' "
+  done
+fi
+
+#$DEFINE_CMD=$(printf %s $DEFINE_CMD)
 
 if [ -z "$MOCK_CONFIG" ]; then
         echo "MOCK_CONFIG is empty. Should bin one of: "
@@ -58,11 +70,9 @@ if [ ! -z "$SOURCE_RPM" ]; then
         echo "      OUTPUT_FOLDER:  $OUTPUT_FOLDER"
         echo "========================================================================"
         if [ ! -z "$NO_CLEANUP" ]; then
-          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean"
-          $MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean" > $OUTPUT_FOLDER/script-test.sh
         else
-          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER"
-          $MOCK_BIN -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/script-test.sh
         fi
 elif [ ! -z "$SPEC_FILE" ]; then
         if [ -z "$SOURCES" ]; then
@@ -72,19 +82,23 @@ elif [ ! -z "$SPEC_FILE" ]; then
         echo "      SPEC_FILE:     $SPEC_FILE"
         echo "      SOURCES:       $SOURCES"
         echo "      OUTPUT_FOLDER: $OUTPUT_FOLDER"
+        echo "      MOCK_DEFINES:  $MOCK_DEFINES"
         echo "========================================================================"
         if [ ! -z "$NO_CLEANUP" ]; then
           # do not cleanup chroot between both mock calls as 1st does not alter it
-          echo "$MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after"
-          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER --no-clean"
-          $MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after
-          $MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER --no-clean
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after" > $OUTPUT_FOLDER/script-test.sh
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER --no-clean" >> $OUTPUT_FOLDER/script-test.sh
         else
-          echo "$MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER"
-          echo "$MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER"
-          $MOCK_BIN -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER
-          $MOCK_BIN -r $MOCK_CONFIG --rebuild $(find $OUTPUT_FOLDER -type f -name "*.src.rpm") --resultdir=$OUTPUT_FOLDER
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/script-test.sh
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER" >> $OUTPUT_FOLDER/script-test.sh
         fi
 fi
 
+chmod 755 $OUTPUT_FOLDER/script-test.sh
+$OUTPUT_FOLDER/script-test.sh
+
+rm $OUTPUT_FOLDER/script-test.sh
+
 echo "Build finished. Check results inside the mounted volume folder."
+
+
