@@ -92,11 +92,13 @@ elif [ ! -z "$SPEC_FILE" ]; then
           echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/script-test.sh
           echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER" >> $OUTPUT_FOLDER/script-test.sh
         fi
-        chmod 755 $OUTPUT_FOLDER/script-test.sh
-        $OUTPUT_FOLDER/script-test.sh
 fi
+
+chmod 755 $OUTPUT_FOLDER/script-test.sh
+$OUTPUT_FOLDER/script-test.sh
 
 rm $OUTPUT_FOLDER/script-test.sh
 
 echo "Build finished. Check results inside the mounted volume folder."
+
 

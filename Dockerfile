@@ -22,7 +22,7 @@ ADD ./build-rpm.sh /build-rpm.sh
 RUN chmod +x /build-rpm.sh
 #RUN setcap cap_sys_admin+ep /usr/sbin/mock
 
-USER root
+USER builder
 ENV HOME /home/builder
 CMD ["/build-rpm.sh"]
 
