@@ -5,6 +5,9 @@ RUN yum clean all
 RUN yum -y update
 RUN yum -y install epel-release
 
+#Root password. Changed from the standard centos7 (locked)
+RUN echo "root:Docker!" | chpasswd
+
 #Install Mock Package
 RUN yum -y install mock
 
@@ -27,4 +30,3 @@ RUN chmod +x /build-rpm.sh
 USER builder
 ENV HOME /home/builder
 CMD ["/build-rpm.sh"]
-
