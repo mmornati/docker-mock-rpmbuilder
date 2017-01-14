@@ -5,9 +5,6 @@ RUN yum clean all
 RUN yum -y update
 RUN yum -y install epel-release
 
-#Root password. Changed from the standard centos7 (locked)
-RUN echo "root:" | chpasswd
-
 #Install Mock Package
 RUN yum -y install mock
 
