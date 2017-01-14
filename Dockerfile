@@ -14,6 +14,7 @@ RUN yum -y install mock
 #Configure users
 RUN useradd -u 1000 builder
 RUN usermod -a -G mock builder
+RUN chmod g+w /etc/mock/*.cfg
 
 VOLUME ["/rpmbuild"]
 
