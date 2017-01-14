@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos:centos7.3.1611
 MAINTAINER Marco Mornati <marco@mornati.net>
 
 RUN yum clean all
