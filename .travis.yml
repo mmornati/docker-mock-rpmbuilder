@@ -16,16 +16,13 @@ before_script:
       fi
     - docker build -t "$image" .
     - docker inspect "$image"
-    - docker run --rm "$image" /usr/sbin/mock --version
+    - docker run --rm --name mocktest "$image" /usr/sbin/mock --version
 script:
-    - official-images/test/run.sh "$image"
+        - official-images/test/run.sh -t utc -t override-cmd "$image"
 
 after_script:
-    - ls -l /var/lib/docker/tmp/docker-import-316097873
     - docker images
 
 after_success:
-  - if [ -n "$TRAVIS_TAG" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push "$image";
-    fi

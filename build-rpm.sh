@@ -17,7 +17,6 @@ then
 fi
 
 #$DEFINE_CMD=$(printf %s $DEFINE_CMD)
-
 if [ -z "$MOCK_CONFIG" ]; then
         echo "MOCK_CONFIG is empty. Should bin one of: "
         ls -l $MOCK_CONF_FOLDER
@@ -100,5 +99,3 @@ $OUTPUT_FOLDER/script-test.sh
 rm $OUTPUT_FOLDER/script-test.sh
 
 echo "Build finished. Check results inside the mounted volume folder."
-
-
