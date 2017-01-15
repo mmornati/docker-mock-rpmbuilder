@@ -18,7 +18,7 @@ before_script:
     - docker inspect "$image"
     - docker run --rm --name mocktest "$image" /usr/sbin/mock --version
 script:
-        - official-images/test/run.sh -t utc override-cmd "$image"
+        - official-images/test/run.sh -t utc -t override-cmd "$image"
 
 after_script:
     - docker images
