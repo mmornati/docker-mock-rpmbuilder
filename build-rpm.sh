@@ -17,16 +17,6 @@ then
 fi
 
 #$DEFINE_CMD=$(printf %s $DEFINE_CMD)
-if [ -z "$SOURCE_RPM" ] && [ -z "$SPEC_FILE" ] && [ -z "$SPEC_FILE" ]; then
-        echo "Running into test mode. Doker will do nothing listening for tests..."
-        end=$((SECONDS+60))
-        while [ $SECONDS -lt $end ]; do
-            sleep 10;
-        done
-        echo "Finish..."
-        exit 1
-fi
-
 if [ -z "$MOCK_CONFIG" ]; then
         echo "MOCK_CONFIG is empty. Should bin one of: "
         ls -l $MOCK_CONF_FOLDER
