@@ -1,11 +1,11 @@
 FROM centos:centos7.3.1611
 MAINTAINER Marco Mornati <marco@mornati.net>
 
-RUN yum -y update
-RUN yum -y install epel-release
+RUN yum -y --setopt="tsflags=nodocs" update
+RUN yum -y --setopt="tsflags=nodocs" install epel-release
 
 #Install Mock Package
-RUN yum -y install mock
+RUN yum -y --setopt="tsflags=nodocs" install mock
 
 # Cleaning Yum cache
 RUN yum clean all && \
