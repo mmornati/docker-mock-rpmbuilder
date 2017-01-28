@@ -1,12 +1,15 @@
 FROM centos:centos7.3.1611
 MAINTAINER Marco Mornati <marco@mornati.net>
 
-RUN yum clean all
 RUN yum -y update
 RUN yum -y install epel-release
 
 #Install Mock Package
 RUN yum -y install mock
+
+# Cleaning Yum cache
+RUN yum clean all && \
+	rm -rf /var/cache/yum/
 
 #Configure users
 RUN useradd -u 1000 -G mock builder
