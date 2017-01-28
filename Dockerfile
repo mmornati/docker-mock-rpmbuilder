@@ -9,8 +9,7 @@ RUN yum -y install epel-release
 RUN yum -y install mock
 
 #Configure users
-RUN useradd -u 1000 builder
-RUN usermod -a -G mock builder
+RUN useradd -u 1000 -G mock builder
 RUN chmod g+w /etc/mock/*.cfg
 
 VOLUME ["/rpmbuild"]
