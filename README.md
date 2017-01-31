@@ -85,6 +85,18 @@ epel-6-ppc64   fedora-19-s390    fedora-20-s390    fedora-21-ppc64le  fedora-raw
 epel-6-x86_64  fedora-19-s390x   fedora-20-s390x   fedora-21-s390     fedora-rawhide-ppc64le
 ```
 
+## Signing your RPMs with GPG Key
+
+If you want you sign your RPMs, you need to pass some extra parameters
+* Mount the directory with your gpg private key : -v $HOME/.gnupg:/home/rpmbuilder/.gnupg:ro
+* Set the Signature key you want to use : -e SIGNATURE="Corporate Repo Key"
+* Pass the GPG Key passphrase, if needed : -e GPG_PASS="my very secure password". You can put the passphrase in a file and use GPG_PASS="$(cat $PWD/.gpg_pass)"
+
+```
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass) -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mockrpmbuilder
+```
+
+
 ## Check build state
 
 To check the rpmbuild progress (and/or errors) you can simply check docker logs.

@@ -98,4 +98,14 @@ $OUTPUT_FOLDER/script-test.sh
 
 rm $OUTPUT_FOLDER/script-test.sh
 
+
+if [ ! -z "$SIGNATURE" ]; then
+	echo "%_signature gpg" > $HOME/.rpmmacros
+	echo "%_gpg_name ${SIGNATURE}" >> $HOME/.rpmmacros
+	echo "Signing RPM using ${SIGNATURE} key"
+	find $OUTPUT_FOLDER -type f -name "*.rpm" -exec /rpm-sign.exp {} ${GPG_PASS} \;
+else
+	echo "No RPMs signature requested"
+fi
+
 echo "Build finished. Check results inside the mounted volume folder."
