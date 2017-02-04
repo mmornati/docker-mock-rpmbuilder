@@ -1,17 +1,14 @@
 FROM centos:centos7.3.1611
 MAINTAINER Marco Mornati <marco@mornati.net>
 
-RUN yum clean all
-RUN yum -y update
-RUN yum -y install epel-release
-
-#Install Mock Package
-RUN yum -y install mock
+RUN yum -y --setopt="tsflags=nodocs" update && \
+	yum -y --setopt="tsflags=nodocs" install epel-release mock && \
+	yum clean all && \
+	rm -rf /var/cache/yum/
 
 #Configure users
-RUN useradd -u 1000 builder
-RUN usermod -a -G mock builder
-RUN chmod g+w /etc/mock/*.cfg
+RUN useradd -u 1000 -G mock builder && \
+	chmod g+w /etc/mock/*.cfg
 
 VOLUME ["/rpmbuild"]
 
