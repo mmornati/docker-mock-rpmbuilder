@@ -1,4 +1,4 @@
-FROM centos:centos7.3.1611
+FROM centos:centos7.6.1810
 MAINTAINER Marco Mornati <marco@mornati.net>
 
 RUN yum -y --setopt="tsflags=nodocs" update && \
