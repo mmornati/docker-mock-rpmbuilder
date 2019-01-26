@@ -96,6 +96,25 @@ If you want you sign your RPMs, you need to pass some extra parameters
 docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mockrpmbuilder
 ```
 
+## Build on GitHub Actions
+You can use the Dockerfile to build an RPM for your project. You can follow this sample action:
+
+```
+workflow "Build Repo RPM" {
+  on = "push"
+  resolves = ["Build RPM"]
+}
+
+action "Build RPM" {
+  uses = "mmornati/docker-mock-rpmbuilder@master"
+  env = {
+    SPEC_FILE = "git.spec"
+    SOURCES = "SOURCES/git-2.3.0.tar.gz"
+    MOCK_CONFIG = "epel-6-i386"
+    GITHUB_BUILD = "true"
+  }
+}
+```
 
 ## Check build state
 
