@@ -1,7 +1,7 @@
 #!/bin/bash
 MOCK_BIN=/usr/bin/mock
 MOCK_CONF_FOLDER=/etc/mock
-MOUNT_POINT=/rpmbuild
+MOUNT_POINT=$WORKDIR
 OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
 MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
