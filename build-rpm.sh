@@ -102,7 +102,6 @@ runuser -l builder -c "sh $OUTPUT_FOLDER/script-test.sh"
 
 rm $OUTPUT_FOLDER/script-test.sh
 
-
 if [ ! -z "$SIGNATURE" ]; then
 	echo "%_signature gpg" > $HOME/.rpmmacros
 	echo "%_gpg_name ${SIGNATURE}" >> $HOME/.rpmmacros
