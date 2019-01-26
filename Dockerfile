@@ -1,5 +1,5 @@
 FROM centos:centos7.6.1810
-MAINTAINER Marco Mornati <marco@mornati.net>
+LABEL "maintainer"="Marco Mornati <marco@mornati.net>"
 LABEL "com.github.actions.name"="RPM Builder"
 LABEL "com.github.actions.description"="Build RPM using RedHat Mock"
 LABEL "com.github.actions.icon"="pocket"
