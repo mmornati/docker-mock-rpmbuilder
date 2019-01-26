@@ -42,13 +42,13 @@ docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e WORKDIR=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces. 
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e WORKDIR=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 It is important to know:
 
@@ -70,7 +70,7 @@ To speedup build, as suggested by [llicour](https://github.com/llicour), we can 
 We can enable it simply by passing a new parameter (NO_CLEANUP) to the build command:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e WORKDIR=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
 ```
 
 ## Allowed configurations
@@ -93,7 +93,7 @@ If you want you sign your RPMs, you need to pass some extra parameters
 * Pass the GPG Key passphrase, if needed : -e GPG_PASS="my very secure password". You can put the passphrase in a file and use GPG_PASS="$(cat $PWD/.gpg_pass)"
 
 ```
-docker run --cap-add=SYS_ADMIN -d -e WORKDIR=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mockrpmbuilder
 ```
 
 

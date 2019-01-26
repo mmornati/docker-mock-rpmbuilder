@@ -3,7 +3,7 @@
 set -e
 MOCK_BIN=/usr/bin/mock
 MOCK_CONF_FOLDER=/etc/mock
-MOUNT_POINT=$WORKDIR
+MOUNT_POINT=$GITHUB_WORKSPACE
 OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
 MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
