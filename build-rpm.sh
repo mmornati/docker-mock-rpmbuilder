@@ -1,4 +1,6 @@
 #!/bin/bash
+# exit when any command fails
+set -e
 MOCK_BIN=/usr/bin/mock
 MOCK_CONF_FOLDER=/etc/mock
 MOUNT_POINT=$WORKDIR
