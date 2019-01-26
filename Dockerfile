@@ -28,6 +28,4 @@ RUN chmod +x /build-rpm.sh
 ADD ./rpm-sign.exp /rpm-sign.exp
 RUN chmod +x /rpm-sign.exp
 
-USER builder
-ENV HOME /home/builder
 CMD ["/build-rpm.sh"]

@@ -51,20 +51,17 @@ if [ ! -z "$HTTP_PROXY" ] || [ ! -z "$http_proxy" ]; then
         sed s/\\[main\\]/\[main\]\\\nproxy=$TEMP_PROXY/g /tmp/$MOCK_CONFIG.cfg > /etc/mock/$MOCK_CONFIG.cfg
 fi
 
-if [ -z "$BUILD_ON_GITHUB" ]; then
-        OUTPUT_FOLDER=${OUTPUT_FOLDER}/${MOCK_CONFIG}
-        if [ ! -d "$OUTPUT_FOLDER" ]; then
-                mkdir -p $OUTPUT_FOLDER
-        else
-                rm -f $OUTPUT_FOLDER/*
-        fi
-
-        if [ ! -d "$CACHE_FOLDER" ]; then
-                mkdir -p $CACHE_FOLDER
-        fi
+OUTPUT_FOLDER=${OUTPUT_FOLDER}/${MOCK_CONFIG}
+if [ ! -d "$OUTPUT_FOLDER" ]; then
+        mkdir -p $OUTPUT_FOLDER
+        chown -R builder:mock $OUTPUT_FOLDER
 else
-        OUTPUT_FOLDER=$MOUNT_POINT
-        CACHE_FOLDER=$MOUNT_POINT
+        rm -f $OUTPUT_FOLDER/*
+fi
+
+if [ ! -d "$CACHE_FOLDER" ]; then
+        mkdir -p $CACHE_FOLDER
+        chown -R builder:mock $CACHE_FOLDER
 fi
 
 echo "=> Building parameters:"
@@ -101,7 +98,7 @@ elif [ ! -z "$SPEC_FILE" ]; then
 fi
 
 chmod 755 $OUTPUT_FOLDER/script-test.sh
-$OUTPUT_FOLDER/script-test.sh
+runuser -l builder -c "sh $OUTPUT_FOLDER/script-test.sh"
 
 rm $OUTPUT_FOLDER/script-test.sh
 
