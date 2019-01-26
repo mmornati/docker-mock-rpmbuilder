@@ -63,8 +63,8 @@ if [ -z "$BUILD_ON_GITHUB" ]; then
                 mkdir -p $CACHE_FOLDER
         fi
 else
-        $OUTPUT_FOLDER = $MOUNT_POINT
-        $CACHE_FOLDER = $MOUNT_POINT
+        OUTPUT_FOLDER = $MOUNT_POINT
+        CACHE_FOLDER = $MOUNT_POINT
 fi
 
 echo "=> Building parameters:"
