@@ -24,7 +24,7 @@ RUN echo "config_opts['cache_topdir'] = '/rpmbuild/cache/mock'" >> /etc/mock/sit
 
 ADD ./build-rpm.sh /build-rpm.sh
 RUN chmod +x /build-rpm.sh
-#RUN setcap cap_sys_admin+ep /usr/sbin/mock
+RUN setcap cap_sys_admin+ep /usr/sbin/mock
 ADD ./rpm-sign.exp /rpm-sign.exp
 RUN chmod +x /rpm-sign.exp
 
