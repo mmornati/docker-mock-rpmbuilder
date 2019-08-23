@@ -7,9 +7,11 @@ Build RPMs using the Mock Project (for any platform)
 
 To allow the import/export of created RPMs you need to create a docker volume and allow the read/write rights (or add owner) to the user builder(uid:1000).
 
+> NOTE: On Mac OSx the `chown` is not needed. Docker it will be able to build directly using your Mac default/admin user. 
+
 ```bash
-mkdir /tmp/rpmbuild
-chown -R 1000:1000 /tmp/rpmbuild
+mkdir /Users/mmornati/rpmbuild
+chown -R 1000:1000 /Users/mmornati/rpmbuild
 ```
 In this folder you can put the src.rpms to rebuild.
 
@@ -36,19 +38,19 @@ docker pull mmornati/mock-rpmbuilder
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces. 
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 It is important to know:
 
@@ -70,7 +72,7 @@ To speedup build, as suggested by [llicour](https://github.com/llicour), we can 
 We can enable it simply by passing a new parameter (NO_CLEANUP) to the build command:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /tmp/rpmbuild:/rpmbuild mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 ## Allowed configurations
@@ -93,7 +95,7 @@ If you want you sign your RPMs, you need to pass some extra parameters
 * Pass the GPG Key passphrase, if needed : -e GPG_PASS="my very secure password". You can put the passphrase in a file and use GPG_PASS="$(cat $PWD/.gpg_pass)"
 
 ```
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /tmp/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mockrpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mock-rpmbuilder
 ```
 
 ## BETA: Build on GitHub Actions
@@ -153,7 +155,7 @@ Start: yum install
 And use Mock log files, that are created in the outputdir:
 
 ```bash
-[root@server ~]# ll /tmp/rpmbuild/output/
+[root@server ~]# ll /Users/mmornati/rpmbuild/rpmbuild/output/
 totale 188
 -rw-rw-r--. 1 1000 1000  40795 21 feb 10:37 build.log
 -rw-rw-r--. 1 1000 1000 144994 21 feb 10:34 root.log
@@ -165,7 +167,7 @@ totale 188
 If all worked well, you should have all the RPMs (source + binaries) availables in the configured output folder:
 
 ```bash
-[root@server ~]# ll /tmp/rpmbuild/output/
+[root@server ~]# ll /Users/mmornati/rpmbuild/output/
 totale 28076
 -rw-rw-r--. 1 1000 1000   117010 21 feb 10:40 build.log
 -rw-rw-r--. 1 1000 mock  7941092 21 feb 10:39 git-2.3.0-1.el6.i686.rpm
