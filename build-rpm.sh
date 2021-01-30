@@ -79,22 +79,29 @@ if [ ! -z "$SOURCE_RPM" ]; then
         fi
 elif [ ! -z "$SPEC_FILE" ]; then
         if [ -z "$SOURCES" ]; then
-                echo "You need to specify SOURCES env variable pointing to folder or sources file (only when building with SPEC_FILE)"
-                exit 1;
+                echo "WARNING: The SOURCES env variable pointing to folder or sources file was not specified. $SPEC_FILE will need to profied it's own Source."
         fi
         echo "      SPEC_FILE:     $SPEC_FILE"
         echo "      SOURCES:       $SOURCES"
         echo "      OUTPUT_FOLDER: $OUTPUT_FOLDER"
-        echo "      MOCK_DEFINES:  $MOCK_DEFINES"
+        echo "      MOCK_DEFINES:  ${MOCK_DEFINES[@]}"
         echo "========================================================================"
+
+        BUILD_COMMAND="$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --resultdir=$OUTPUT_FOLDER"
+        REBUILD_COMMAND="$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER"
+
+        if [ ! -z "$SOURCES" ]; then
+          BUILD_COMMAND="$BUILD_COMMAND --sources=$MOUNT_POINT/$SOURCES"
+        fi
+
         if [ ! -z "$NO_CLEANUP" ]; then
           # do not cleanup chroot between both mock calls as 1st does not alter it
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER --no-cleanup-after" > $OUTPUT_FOLDER/script-test.sh
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER --no-clean" >> $OUTPUT_FOLDER/script-test.sh
-        else
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --sources=$MOUNT_POINT/$SOURCES --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/script-test.sh
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER" >> $OUTPUT_FOLDER/script-test.sh
+          BUILD_COMMAND="$BUILD_COMMAND --no-cleanup-after"
+          REBUILD_COMMAND="$REBUILD_COMMAND --no-clean"
         fi
+
+        echo "$BUILD_COMMAND" > $OUTPUT_FOLDER/script-test.sh
+        echo "$REBUILD_COMMAND" >> $OUTPUT_FOLDER/script-test.sh
 fi
 
 chmod 755 $OUTPUT_FOLDER/script-test.sh
