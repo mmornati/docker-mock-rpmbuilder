@@ -38,19 +38,19 @@ docker pull mmornati/mock-rpmbuilder
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces. 
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 It is important to know:
 
@@ -72,19 +72,51 @@ To speedup build, as suggested by [llicour](https://github.com/llicour), we can 
 We can enable it simply by passing a new parameter (NO_CLEANUP) to the build command:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 ## Allowed configurations
 
 ```
-default        epel-7-x86_64     fedora-19-x86_64  fedora-20-x86_64   fedora-21-s390x         fedora-rawhide-s390
-epel-5-i386    fedora-19-armhfp  fedora-20-armhfp  fedora-21-aarch64  fedora-21-x86_64        fedora-rawhide-s390x
-epel-5-ppc     fedora-19-i386    fedora-20-i386    fedora-21-armhfp   fedora-rawhide-aarch64  fedora-rawhide-sparc
-epel-5-x86_64  fedora-19-ppc64   fedora-20-ppc64   fedora-21-i386     fedora-rawhide-armhfp   fedora-rawhide-x86_64
-epel-6-i386    fedora-19-ppc     fedora-20-ppc     fedora-21-ppc64    fedora-rawhide-i386     
-epel-6-ppc64   fedora-19-s390    fedora-20-s390    fedora-21-ppc64le  fedora-rawhide-ppc64    
-epel-6-x86_64  fedora-19-s390x   fedora-20-s390x   fedora-21-s390     fedora-rawhide-ppc64le
+amazonlinux-2-aarch64     fedora-33-i386          mageia-cauldron-aarch64
+amazonlinux-2-x86_64      fedora-33-ppc64le       mageia-cauldron-armv7hl
+centos-7-aarch64          fedora-33-s390x         mageia-cauldron-i586
+centos-7-ppc64            fedora-33-x86_64        mageia-cauldron-x86_64
+centos-7-ppc64le          fedora-34-aarch64       openmandriva-4.1-aarch64
+centos-7-x86_64           fedora-34-armhfp        openmandriva-4.1-armv7hnl
+centos-8-aarch64          fedora-34-i386          openmandriva-4.1-i686
+centos-8-ppc64le          fedora-34-ppc64le       openmandriva-4.1-x86_64
+centos-8-x86_64           fedora-34-s390x         openmandriva-cooker-aarch64
+centos-stream-8-aarch64   fedora-34-x86_64        openmandriva-cooker-armv7hnl
+centos-stream-8-ppc64le   fedora-35-aarch64       openmandriva-cooker-i686
+centos-stream-8-x86_64    fedora-35-armhfp        openmandriva-cooker-x86_64
+custom-1-aarch64          fedora-35-i386          openmandriva-rolling-aarch64
+custom-1-armhfp           fedora-35-ppc64le       openmandriva-rolling-armv7hnl
+custom-1-i386             fedora-35-s390x         openmandriva-rolling-i686
+custom-1-ppc64            fedora-35-x86_64        openmandriva-rolling-x86_64
+custom-1-ppc64le          fedora-eln-aarch64      opensuse-leap-15.1-aarch64
+custom-1-s390             fedora-eln-i386         opensuse-leap-15.1-x86_64
+custom-1-s390x            fedora-eln-ppc64le      opensuse-leap-15.2-aarch64
+custom-1-x86_64           fedora-eln-s390x        opensuse-leap-15.2-x86_64
+default                   fedora-eln-x86_64       opensuse-tumbleweed-aarch64
+epel-7-aarch64            fedora-rawhide-aarch64  opensuse-tumbleweed-i586
+epel-7-ppc64              fedora-rawhide-armhfp   opensuse-tumbleweed-ppc64
+epel-7-ppc64le            fedora-rawhide-i386     opensuse-tumbleweed-ppc64le
+epel-7-x86_64             fedora-rawhide-ppc64le  opensuse-tumbleweed-x86_64
+epel-8-aarch64            fedora-rawhide-s390x    rhel-7-aarch64
+epel-8-ppc64le            fedora-rawhide-x86_64   rhel-7-ppc64
+epel-8-x86_64             mageia-7-aarch64        rhel-7-ppc64le
+epelplayground-8-aarch64  mageia-7-armv7hl        rhel-7-s390x
+epelplayground-8-ppc64le  mageia-7-i586           rhel-7-x86_64
+epelplayground-8-x86_64   mageia-7-x86_64         rhel-8-aarch64
+fedora-32-aarch64         mageia-8-aarch64        rhel-8-ppc64le
+fedora-32-armhfp          mageia-8-armv7hl        rhel-8-s390x
+fedora-32-i386            mageia-8-i586           rhel-8-x86_64
+fedora-32-ppc64le         mageia-8-x86_64         rhelepel-8-aarch64
+fedora-32-s390x           mageia-9-aarch64        rhelepel-8-ppc64
+fedora-32-x86_64          mageia-9-armv7hl        rhelepel-8-ppc64le
+fedora-33-aarch64         mageia-9-i586           rhelepel-8-x86_64
+fedora-33-armhfp          mageia-9-x86_64         site-defaults
 ```
 
 ## Signing your RPMs with GPG Key
@@ -95,7 +127,7 @@ If you want you sign your RPMs, you need to pass some extra parameters
 * Pass the GPG Key passphrase, if needed : -e GPG_PASS="my very secure password". You can put the passphrase in a file and use GPG_PASS="$(cat $PWD/.gpg_pass)"
 
 ```
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-6-i386 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mock-rpmbuilder
 ```
 
 ## BETA: Build on GitHub Actions
@@ -112,7 +144,7 @@ action "Build RPM" {
   env = {
     SPEC_FILE = "git.spec"
     SOURCES = "git-2.3.0.tar.gz"
-    MOCK_CONFIG = "epel-6-i386"
+    MOCK_CONFIG = "epel-8-aarch64"
   }
 }
 ```
@@ -128,7 +160,7 @@ f8d161e72832        mmornati/mockrpmbuilder:latest   "/build-rpm.sh"     2 secon
 [root@server docker-mock-rpmbuilder]# docker logs -f f8d161e72832
 => Building parameters:
 ========================================================================
-      MOCK_CONFIG:    epel-6-i386
+      MOCK_CONFIG:    epel-8-aarch64
       SOURCE_RPM:     git-2.3.0-1.el7.centos.src.rpm
 ========================================================================
 INFO: mock.py version 1.2.6 starting (python version = 2.7.5)...
@@ -136,7 +168,7 @@ Start: init plugins
 INFO: selinux disabled
 Finish: init plugins
 Start: run
-INFO: Start(/rpmbuild/git-2.3.0-1.el7.centos.src.rpm)  Config(epel-6-i386)
+INFO: Start(/rpmbuild/git-2.3.0-1.el7.centos.src.rpm)  Config(epel-8-aarch64)
 Start: clean chroot
 Finish: clean chroot
 Start: chroot init

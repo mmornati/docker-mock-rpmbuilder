@@ -1,14 +1,15 @@
-FROM centos:centos7.6.1810
+FROM centos:centos8.3.2011
 LABEL "maintainer"="Marco Mornati <marco@mornati.net>"
 LABEL "com.github.actions.name"="RPM Builder"
 LABEL "com.github.actions.description"="Build RPM using RedHat Mock"
 LABEL "com.github.actions.icon"="pocket"
 LABEL "com.github.actions.color"="green"
 
-RUN yum -y --setopt="tsflags=nodocs" update && \
-	yum -y --setopt="tsflags=nodocs" install epel-release mock rpm-sign expect && \
-	yum clean all && \
-	rm -rf /var/cache/yum/
+RUN dnf -y --setopt="tsflags=nodocs" update && \
+	dnf -y --setopt="tsflags=nodocs" install epel-release && \
+	dnf -y --setopt="tsflags=nodocs" install mock rpm-sign expect && \
+	dnf clean all && \
+	rm -rf /var/cache/dnf/
 
 #Configure users
 RUN useradd -u 1000 -G mock builder && \
