@@ -1,13 +1,14 @@
-#!/bin/bash
-# exit when any command fails
+#!/usr/bin/bash
 set -e
+
 MOCK_BIN=/usr/bin/mock
 MOCK_CONF_FOLDER=/etc/mock
-MOUNT_POINT=$GITHUB_WORKSPACE
 OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
 MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
 DEF_SIZE=${#MOCK_DEFINES[@]}
+
+/usr/sbin/useradd --uid ${UID} --groups mock builder 
 
 if [ $DEF_SIZE -gt 0 ];
 then
@@ -73,13 +74,14 @@ if [ ! -z "$SOURCE_RPM" ]; then
         echo "      OUTPUT_FOLDER:  $OUTPUT_FOLDER"
         echo "========================================================================"
         if [ ! -z "$NO_CLEANUP" ]; then
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean" > $OUTPUT_FOLDER/script-test.sh
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER --no-clean" > $OUTPUT_FOLDER/build-script.sh
         else
-          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/script-test.sh
+          echo "$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild $MOUNT_POINT/$SOURCE_RPM --resultdir=$OUTPUT_FOLDER" > $OUTPUT_FOLDER/build-script.sh
         fi
 elif [ ! -z "$SPEC_FILE" ]; then
         if [ -z "$SOURCES" ]; then
-                echo "WARNING: The SOURCES env variable pointing to folder or sources file was not specified. $SPEC_FILE will need to profied it's own Source."
+          SOURCES=sources
+          GET_SOURCES="/usr/bin/spectool --get-files  --directory $MOUNT_POINT/$SOURCES $MOUNT_POINT/$SPEC_FILE"
         fi
         echo "      SPEC_FILE:     $SPEC_FILE"
         echo "      SOURCES:       $SOURCES"
@@ -87,27 +89,24 @@ elif [ ! -z "$SPEC_FILE" ]; then
         echo "      MOCK_DEFINES:  ${MOCK_DEFINES[@]}"
         echo "========================================================================"
 
-        BUILD_COMMAND="$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --resultdir=$OUTPUT_FOLDER"
+        BUILD_COMMAND="$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --buildsrpm --spec=$MOUNT_POINT/$SPEC_FILE --resultdir=$OUTPUT_FOLDER --sources=$MOUNT_POINT/$SOURCES"
         REBUILD_COMMAND="$MOCK_BIN $DEFINE_CMD -r $MOCK_CONFIG --rebuild \$(find $OUTPUT_FOLDER -type f -name \"*.src.rpm\") --resultdir=$OUTPUT_FOLDER"
-
-        if [ ! -z "$SOURCES" ]; then
-          BUILD_COMMAND="$BUILD_COMMAND --sources=$MOUNT_POINT/$SOURCES"
-        fi
 
         if [ ! -z "$NO_CLEANUP" ]; then
           # do not cleanup chroot between both mock calls as 1st does not alter it
           BUILD_COMMAND="$BUILD_COMMAND --no-cleanup-after"
           REBUILD_COMMAND="$REBUILD_COMMAND --no-clean"
         fi
-
-        echo "$BUILD_COMMAND" > $OUTPUT_FOLDER/script-test.sh
-        echo "$REBUILD_COMMAND" >> $OUTPUT_FOLDER/script-test.sh
+        echo "" > $OUTPUT_FOLDER/build-script.sh
+        echo "$GET_SOURCES" >> $OUTPUT_FOLDER/build-script.sh
+        echo "$BUILD_COMMAND" >> $OUTPUT_FOLDER/build-script.sh
+        echo "$REBUILD_COMMAND" >> $OUTPUT_FOLDER/build-script.sh
 fi
 
-chmod 755 $OUTPUT_FOLDER/script-test.sh
-runuser -l builder -c "sh $OUTPUT_FOLDER/script-test.sh"
+chmod 755 $OUTPUT_FOLDER/build-script.sh
+runuser -l builder -c "sh $OUTPUT_FOLDER/build-script.sh"
 
-rm $OUTPUT_FOLDER/script-test.sh
+rm $OUTPUT_FOLDER/build-script.sh
 
 if [ ! -z "$SIGNATURE" ]; then
 	echo "%_signature gpg" > $HOME/.rpmmacros
