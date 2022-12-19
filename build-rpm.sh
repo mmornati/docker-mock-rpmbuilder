@@ -7,6 +7,7 @@ OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
 MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
 DEF_SIZE=${#MOCK_DEFINES[@]}
+RPM_LINT="/usr/bin/rpmlint -i $MOUNT_POINT/$SOURCE_RPM"
 
 /usr/sbin/useradd --uid ${UID} --groups mock builder 
 
@@ -97,14 +98,15 @@ elif [ ! -z "$SPEC_FILE" ]; then
           BUILD_COMMAND="$BUILD_COMMAND --no-cleanup-after"
           REBUILD_COMMAND="$REBUILD_COMMAND --no-clean"
         fi
-        echo "" > $OUTPUT_FOLDER/build-script.sh
+        echo "set -e" > $OUTPUT_FOLDER/build-script.sh
+        echo "$RPM_LINT 1>&2" >> $OUTPUT_FOLDER/build-script.sh
         echo "$GET_SOURCES" >> $OUTPUT_FOLDER/build-script.sh
         echo "$BUILD_COMMAND" >> $OUTPUT_FOLDER/build-script.sh
         echo "$REBUILD_COMMAND" >> $OUTPUT_FOLDER/build-script.sh
 fi
 
 chmod 755 $OUTPUT_FOLDER/build-script.sh
-runuser -l builder -c "sh $OUTPUT_FOLDER/build-script.sh"
+sudo -u builder "$OUTPUT_FOLDER/build-script.sh" 2>/dev/stderr
 
 rm $OUTPUT_FOLDER/build-script.sh
 

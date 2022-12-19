@@ -6,7 +6,7 @@ LABEL "com.github.actions.icon"="pocket"
 LABEL "com.github.actions.color"="green"
 
 RUN dnf -y --setopt="tsflags=nodocs" update && \
-	dnf -y --setopt="tsflags=nodocs" install rpmdevtools && \
+	dnf -y --setopt="tsflags=nodocs" install rpmdevtools rpmlint && \
 	dnf -y --setopt="tsflags=nodocs" install mock rpm-sign expect && \
 	dnf clean all && \
 	rm -rf /var/cache/dnf/
