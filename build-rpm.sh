@@ -7,7 +7,14 @@ OUTPUT_FOLDER=$MOUNT_POINT/output
 CACHE_FOLDER=$MOUNT_POINT/cache/mock
 MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
 DEF_SIZE=${#MOCK_DEFINES[@]}
-RPM_LINT="/usr/bin/rpmlint -i $MOUNT_POINT/$SOURCE_RPM"
+
+if [ ! -z "$GITHUB_WORKSPACE" ]; then
+        MOUNT_POINT=$GITHUB_WORKSPACE
+fi
+
+if [ -z "$NO_RPMLINT" ]; then
+  RPM_LINT="/usr/bin/rpmlint -i ${MOUNT_POINT}/${SPEC_FILE}"
+fi
 
 /usr/sbin/useradd --uid ${UID} --groups mock builder 
 

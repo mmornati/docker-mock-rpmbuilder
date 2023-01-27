@@ -1,18 +1,17 @@
 [![Build Status](https://travis-ci.org/mmornati/docker-mock-rpmbuilder.svg)](https://travis-ci.org/mmornati/docker-mock-rpmbuilder)
 
 # docker-mock-rpmbuilder
+
 Build RPMs using the Mock Project (for any platform)
 
 ## Create working directory
 
-To allow the import/export of created RPMs you need to create a docker volume and allow the read/write rights (or add owner) to the user builder(uid:1000).
-
-> NOTE: On Mac OSx the `chown` is not needed. Docker it will be able to build directly using your Mac default/admin user. 
+To allow the import/export of created RPMs you need to create a docker volume.
 
 ```bash
 mkdir /Users/mmornati/rpmbuild
-chown -R 1000:1000 /Users/mmornati/rpmbuild
 ```
+
 In this folder you can put the src.rpms to rebuild.
 
 This folder will also store mock cache directories that allow to speed up repeated build
@@ -38,20 +37,28 @@ docker pull mmornati/mock-rpmbuilder
 To execute the docker container and rebuild RPMs four SRPMs you can run it in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e MOCK_CONFIG=epel-8-aarch64 \
+-e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e UID=$(id -u)\
+-v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e UID=$(id -u)\
+-e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz \
+-e SPEC_FILE=SPECS/git.spec -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
-The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces. 
+The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces.
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz -e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e UID=$(id -u)\
+-e MOCK_CONFIG=epel-8-aarch64 -e SOURCES=SOURCES/git-2.3.0.tar.gz \
+-e SPEC_FILE=SPECS/git.spec -e MOCK_DEFINES="VERSION=1 RELEASE=12 ANYTHING_ELSE=1" \
+-v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
+
 It is important to know:
 
 * With spec file the build process could be long. The reason is that mock is invoked twice: the first to build SRPM the second to build all other RPMS.
@@ -61,7 +68,7 @@ It is important to know:
 > new mountpoint inside the process.
 > Withour this you will get this error:
 >
->  ERROR: Namespace unshare failed.
+> ERROR: Namespace unshare failed.
 >
 > If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
 > Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
@@ -72,7 +79,19 @@ To speedup build, as suggested by [llicour](https://github.com/llicour), we can 
 We can enable it simply by passing a new parameter (NO_CLEANUP) to the build command:
 
 ```bash
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -e NO_CLEANUP=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild \
+-e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm \
+-e NO_CLEANUP=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
+```
+
+## Execute without rpmlint
+
+We can disable it simply by passing a new parameter (NO_RPMBUILD) to the build command:
+
+```bash
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e UID=$(id -u)\
+-e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm \
+-e NO_RPMBUILD=true -v /Users/mmornati/rpmbuild:/rpmbuild mmornati/mock-rpmbuilder
 ```
 
 ## Allowed configurations
@@ -122,15 +141,20 @@ fedora-33-armhfp          mageia-9-x86_64         site-defaults
 ## Signing your RPMs with GPG Key
 
 If you want you sign your RPMs, you need to pass some extra parameters
+
 * Mount the directory with your gpg private key : -v $HOME/.gnupg:/home/rpmbuilder/.gnupg:ro
 * Set the Signature key you want to use : -e SIGNATURE="Corporate Repo Key"
 * Pass the GPG Key passphrase, if needed : -e GPG_PASS="my very secure password". You can put the passphrase in a file and use GPG_PASS="$(cat $PWD/.gpg_pass)"
 
 ```
-docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild -e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm -v /Users/mmornati/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" -e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mock-rpmbuilder
+docker run --cap-add=SYS_ADMIN -d -e GITHUB_WORKSPACE=/rpmbuild \
+-e MOCK_CONFIG=epel-8-aarch64 -e SOURCE_RPM=git-2.3.0-1.el7.centos.src.rpm \
+-v /Users/mmornati/rpmbuild:/rpmbuild -e SIGNATURE="Corporate Repo Key" \
+-e GPG_PASS="$(cat $PWD/.gpg_pass)" -v $HOME/.gnupg:/home/builder/.gnupg:ro mmornati/mock-rpmbuilder
 ```
 
 ## BETA: Build on GitHub Actions
+
 You can use the Dockerfile to build an RPM for your project. You can follow this sample action:
 
 ```
@@ -219,9 +243,11 @@ totale 28076
 ```
 
 ## Contributions
+
 Updated and fixed with contributions by [csmart](https://github.com/csmart/docker-mock-rpmbuilder/commit/c3f47343efd4484131af5fd254f3e51cb7414a78) and [llicour](https://github.com/llicour/docker-mock-rpmbuilder/commit/6a5b169860b3b42f10a7c7771d1342dd7c78359b)
 
 ## Docker HUB
+
 This repository is automatically linked to Docker Hub. [https://hub.docker.com/r/mmornati/mock-rpmbuilder/](https://hub.docker.com/r/mmornati/mock-rpmbuilder/).
 
 Any new commit and contribution will automatically force a build on DockerHub to have the latest version of the container ready to use.
