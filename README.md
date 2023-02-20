@@ -8,7 +8,8 @@ Build RPMs using the Mock Project (for any platform)
 To allow the import/export of created RPMs you need to create a docker volume
 and allow the read/write rights (or add owner) to the user builder(uid:1000).
 
-> NOTE: On Mac OSx the `chown` is not needed. Docker it will be able to build directly using your Mac default/admin user.
+> NOTE: On Mac OSx the `chown` is not needed. Docker it will be able to build
+> directly using your Mac default/admin user.
 
 ```bash
 mkdir /Users/mmornati/rpmbuild
@@ -50,7 +51,8 @@ docker run --rm --privileged=true \
 -e SOURCE_RPM="git-2.3.0-1.el7.centos.src.rpm" mmornati/mock-rpmbuilder
 ```
 
-If you don't have the source RPMs yet, but you get spec file + sources, to build RPMs you need to start the docker container in this way:
+If you don't have the source RPMs yet, but you get spec file + sources, to build
+RPMs you need to start the docker container in this way:
 
 ```bash
 docker run --rm --privileged=true \
@@ -69,7 +71,20 @@ docker run --rm --privileged=true \
 mmornati/mock-rpmbuilder
 ```
 
-The below line gives an example of defines configurations. If you have your spec file which takes defines you can configure them in the environment variable as below. The sytax is DEFINE=VALUE it will then be converted to --define 'DEFINE VALUE' instead. You can provide multiple defines by separating them by spaces.
+In case, when build requires network inside chroot (for example to build golang applications), you can enable network with `NETWORK` variable
+
+```bash
+docker run --rm --privileged=true \
+--volume="/Users/mmornati/rpmbuild:/rpmbuild" -e MOUNT_POINT="/rpmbuild" \
+-e MOCK_CONFIG="centos-stream-8-x86_64" -e NETWORK="true" \
+-e SPEC_FILE="SPECS/prometheus.spec" mmornati/mock-rpmbuilder
+```
+
+The below line gives an example of defines configurations. If you have your spec
+file which takes defines you can configure them in the environment variable as
+below. The sytax is DEFINE=VALUE it will then be converted to --define
+'DEFINE VALUE' instead. You can provide multiple defines by separating them by
+spaces.
 
 ```bash
 docker run --rm --privileged=true \
@@ -83,7 +98,8 @@ It is important to know:
 
 * With spec file the build process could be long. The reason is that mock is
 invoked twice: the first to build SRPM the second to build all other RPMS
-* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are relative to your mount point. This means if files are at the root of mount point
+* The folders specified for SPEC_FILE, SOURCES and SOURCE_RPM env variables are
+relative to your mount point. This means if files are at the root of mount point
 you need to specify only the file name, otherwise the subfolder should be added
 too (See SOURCES in my example)
 
@@ -92,14 +108,16 @@ too (See SOURCES in my example)
 > new mountpoint inside the process.
 > Withour this you will get this error:
 >
->  ERROR: Namespace unshare failed.
+> ERROR: Namespace unshare failed.
 >
-> If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container with the privilaged parameter.
-> Replace '--cap-add=SYS_ADMIN' with '--privileged=true'.
+> If the '--cap-add=SYS_ADMIN' is not working for you, you can run the container
+> with the privilaged parameter. Replace '--cap-add=SYS_ADMIN' with
+> '--privileged=true'.
 
 ## Execute without cleanup of Mock CHROOT folder
 
-To speedup build, as suggested by [llicour](https://github.com/llicour), we can prevent the cleanup of the Mock chroot folder.
+To speedup build, as suggested by [llicour](https://github.com/llicour), we can
+prevent the cleanup of the Mock chroot folder.
 We can enable it simply by passing a new parameter (NO_CLEANUP) to the build
 command:
 
