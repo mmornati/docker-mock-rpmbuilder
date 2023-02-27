@@ -5,18 +5,19 @@ MOCK_BIN="/usr/bin/mock"
 MOCK_CONF_FOLDER="/etc/mock"
 OUTPUT_FOLDER="${MOUNT_POINT}/output"
 CACHE_FOLDER="${MOUNT_POINT}/cache"
-MOCK_DEFINES=($MOCK_DEFINES) # convert strings into array items
+# shellcheck disable=SC2206
+MOCK_DEFINES=(${MOCK_DEFINES})
 DEF_SIZE="${#MOCK_DEFINES[@]}"
 
-if [ "${DEF_SIZE}" -gt 0 ];
-then
-  for ((i=0; i < DEF_SIZE; i++));
-  do
-    DEFINE_CMD+="--define '$(echo ${MOCK_DEFINES[$i]} | sed 's/=/ /g')' "
-  done
+if [ "${DEF_SIZE}" -gt 0 ]
+  then
+    for ((i=0; i < DEF_SIZE; i++));
+      do
+        # shellcheck disable=SC2116
+        DEFINE_CMD+=" --define '$(echo "${MOCK_DEFINES[$i]//=/ }")'"
+      done
 fi
 
-#$DEFINE_CMD=$(printf %s $DEFINE_CMD)
 if [ -z "${MOCK_CONFIG}" ]
   then
     echo "MOCK_CONFIG is empty. Should bin one of: "
@@ -59,30 +60,28 @@ if [ -n "${HTTP_PROXY}" ] || [ -n "${http_proxy}" ]
 fi
 
 OUTPUT_FOLDER="${OUTPUT_FOLDER}/${MOCK_CONFIG}"
+rm -rf "${OUTPUT_FOLDER}"
+MOCK_CONFIG_OPTS="--config-opts='cache_topdir=${CACHE_FOLDER}'"
+mkdir -p "${OUTPUT_FOLDER}"
+chown -R mockbuilder:mock "${OUTPUT_FOLDER}"
+mkdir -p "${CACHE_FOLDER}"
+chown -R mockbuilder:mock "${CACHE_FOLDER}"
 
-if [ ! -d "${OUTPUT_FOLDER}" ]
+if [ -n "${NETWORK}" ]
   then
-    mkdir -p "${OUTPUT_FOLDER}"
-    chown -R mockbuilder:mock "${OUTPUT_FOLDER}"
-else
-  rm -f "${OUTPUT_FOLDER}"/*
+    MOCK_CONFIG_OPTS="${MOCK_CONFIG_OPTS} --enable-network"
 fi
 
-if [ ! -d "${CACHE_FOLDER}" ]; then
-        mkdir -p "${CACHE_FOLDER}"
-        chown -R mockbuilder:mock "${CACHE_FOLDER}"
-        MOCK_CONFIG_OPTS="--config-opts=cache_topdir=${CACHE_FOLDER}"
-fi
 
 echo "=> Building parameters:"
 echo "================================================================="
-echo "      MOCK_CONFIG:   ${MOCK_CONFIG}"
+echo "   MOCK_CONFIG:      ${MOCK_CONFIG}"
 
 # Priority to SOURCE_RPM if both source and spec file env variable are set
 if [ -n "${SOURCE_RPM}" ]
   then
-    echo "      SOURCE_RPM:     ${SOURCE_RPM}"
-    echo "      OUTPUT_FOLDER:  ${OUTPUT_FOLDER}"
+    echo "   SOURCE_RPM:        ${SOURCE_RPM}"
+    echo "   OUTPUT_FOLDER:     -e${OUTPUT_FOLDER}"
     echo "================================================================="
 
     if [ -n "${NO_CLEANUP}" ]
@@ -104,10 +103,11 @@ elif [ -n "${SPEC_FILE}" ]
         mkdir -p "${MOUNT_POINT}/${SOURCES}"
     fi
 
-        echo "      SPEC_FILE:     ${SPEC_FILE}"
-        echo "      SOURCES:       ${SOURCES}"
-        echo "      OUTPUT_FOLDER: ${OUTPUT_FOLDER}"
-        echo "      MOCK_DEFINES:  ${MOCK_DEFINES[*]}"
+        echo "   SPEC_FILE:        ${SPEC_FILE}"
+        echo "   SOURCES:          ${SOURCES}"
+        echo "   OUTPUT_FOLDER:    ${OUTPUT_FOLDER}"
+        echo "   MOCK_DEFINES:     ${MOCK_DEFINES[*]}"
+        echo "   MOCK_CONFIG_OPTS: ${MOCK_CONFIG_OPTS[*]}"
         echo "================================================================="
 
         BUILD_COMMAND="${MOCK_BIN} ${MOCK_CONFIG_OPTS} ${DEFINE_CMD} -r \

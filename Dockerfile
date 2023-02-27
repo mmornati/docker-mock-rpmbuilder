@@ -6,10 +6,9 @@ LABEL "com.github.actions.icon"="pocket"
 LABEL "com.github.actions.color"="green"
 
 RUN dnf -y --setopt="tsflags=nodocs" update && \
-	dnf -y --setopt="tsflags=nodocs" install rpmdevtools mock rpm-sign \
-	expect && \
-	dnf clean all && \
-	rm -rf "/var/cache/dnf"
+	dnf -y --setopt="tsflags=nodocs" install rpmdevtools mock \
+	qemu-user-static-x86 qemu-user-static-aarch64 rpm-sign expect && \
+	dnf clean all && rm -rf "/var/cache/dnf"
 
 RUN useradd mockbuilder && \
     usermod -a -G mock mockbuilder && \
