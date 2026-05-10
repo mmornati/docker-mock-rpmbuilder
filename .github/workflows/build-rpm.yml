@@ -51,6 +51,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build container
+        run: |
+          docker build -t mock-rpmbuilder:test .
+
       - name: Prepare test environment
         run: |
           mkdir -p rpmbuild/{SPECS,SOURCES,output,cache}
@@ -70,7 +77,7 @@ jobs:
             -e SPEC_FILE="SPECS/hello.spec" \
             -e SOURCES="SOURCES" \
             -e NO_CLEANUP="true" \
-            ${{ env.IMAGE_NAME }}:test
+            mock-rpmbuilder:test
 
       - name: Check build output
         run: |
@@ -110,6 +117,13 @@ jobs:
           image: multiplatform/qemu-user-static:latest
           platforms: arm64
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build container
+        run: |
+          docker build -t mock-rpmbuilder:test .
+
       - name: Prepare test environment
         run: |
           mkdir -p rpmbuild/{SPECS,SOURCES,output,cache}
@@ -127,7 +141,7 @@ jobs:
             -e MOUNT_POINT="/rpmbuild" \
             -e SPEC_FILE="SPECS/hello.spec" \
             -e SOURCES="SOURCES" \
-            ${{ env.IMAGE_NAME }}:test
+            mock-rpmbuilder:test
 
       - name: Verify ARM64 RPMs built
         run: |
