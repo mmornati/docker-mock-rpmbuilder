@@ -140,6 +140,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up QEMU for ARM64
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: arm64
+
       - name: Log in to Container Registry
         uses: docker/login-action@v3
         with:
