@@ -6,8 +6,12 @@ MOCK_CONF_FOLDER="/etc/mock"
 OUTPUT_FOLDER="${MOUNT_POINT}/output"
 CACHE_FOLDER="${MOUNT_POINT}/cache"
 # shellcheck disable=SC2206
-MOCK_DEFINES=(${MOCK_DEFINES})
-DEF_SIZE="${#MOCK_DEFINES[@]}"
+if [ -n "${MOCK_DEFINES}" ]; then
+  MOCK_DEFINES=(${MOCK_DEFINES})
+  DEF_SIZE="${#MOCK_DEFINES[@]}"
+else
+  DEF_SIZE=0
+fi
 
 if [ "${DEF_SIZE}" -gt 0 ]
   then
