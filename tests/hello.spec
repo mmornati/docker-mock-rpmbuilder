@@ -31,6 +31,7 @@ rm -rf %{buildroot}
 %{_infodir}/hello.info*
 %dir %attr(-, root, root) %{_datadir}/locale
 %{_datadir}/locale/*/LC_MESSAGES/hello.mo
+%exclude %{_infodir}/dir
 
 %post
 if [ -L %{_infodir}/hello.info ]
