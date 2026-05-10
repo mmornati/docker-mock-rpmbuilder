@@ -32,8 +32,8 @@ jobs:
           push: false
           load: true
           tags: ${{ env.IMAGE_NAME }}:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=build
+          cache-to: type=gha,mode=max,scope=build
 
       - name: Inspect image
         run: |
@@ -67,8 +67,8 @@ jobs:
           push: false
           load: true
           tags: mock-rpmbuilder:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=build
+          cache-to: type=gha,mode=max,scope=test-x86
 
       - name: Prepare test environment
         run: |
@@ -147,8 +147,8 @@ jobs:
           push: false
           load: true
           tags: mock-rpmbuilder:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=build
+          cache-to: type=gha,mode=max,scope=test-arm
 
       - name: Prepare test environment
         run: |
@@ -226,6 +226,7 @@ jobs:
           tags: |
             ghcr.io/${{ env.IMAGE_NAME }}:latest
             ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha,scope=build
 
   # Job 5: Push to Docker Hub (only on release tags)
   push-docker-hub:
@@ -246,8 +247,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push to Docker Hub
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          docker build -t mmornati/mock-rpmbuilder:$VERSION -t mmornati/mock-rpmbuilder:latest .
-          docker push mmornati/mock-rpmbuilder:$VERSION
-          docker push mmornati/mock-rpmbuilder:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            mmornati/mock-rpmbuilder:${{ github.ref_name }}
+            mmornati/mock-rpmbuilder:latest
+          cache-from: type=gha,scope=build
