@@ -52,7 +52,6 @@ jobs:
   # Job 2: Integration test - build hello RPM on Rocky 10 x86_64
   test-rocky-10-x86_64:
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,7 +125,6 @@ jobs:
     runs-on: ubuntu-latest
     # Only run on push to main branches (not every PR to save resources)
     if: github.event_name == 'push' || github.event_name == 'schedule'
-    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v4
