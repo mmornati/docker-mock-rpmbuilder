@@ -122,7 +122,7 @@ jobs:
       - name: Set up QEMU for ARM64
         uses: docker/setup-qemu-action@v3
         with:
-          image: qemu-user-static
+          image: tonistiigi/binfmt:latest
           platforms: arm64
 
       - name: Set up Docker Buildx
