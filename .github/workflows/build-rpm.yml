@@ -88,7 +88,15 @@ jobs:
           find rpmbuild/output -name "*.rpm" -type f
           echo ""
           echo "=== Build log ==="
-          cat rpmbuild/output/rocky-10-x86_64/build.log | tail -20
+          cat rpmbuild/output/rocky-10-x86_64/build.log
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-rocky-10-x86_64
+          path: rpmbuild/output/rocky-10-x86_64/
+          retention-days: 7
 
       - name: Verify RPMs built
         run: |
@@ -142,6 +150,23 @@ jobs:
             -e SPEC_FILE="SPECS/hello.spec" \
             -e SOURCES="SOURCES" \
             mock-rpmbuilder:test
+
+      - name: Show ARM64 build log
+        run: |
+          if [ -f rpmbuild/output/rocky+epel-10-aarch64/build.log ]; then
+            echo "=== Build log ==="
+            cat rpmbuild/output/rocky+epel-10-aarch64/build.log
+          else
+            echo "No build.log found"
+          fi
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-rocky-epel-10-aarch64
+          path: rpmbuild/output/rocky+epel-10-aarch64/
+          retention-days: 7
 
       - name: Verify ARM64 RPMs built
         run: |
