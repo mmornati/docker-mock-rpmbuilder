@@ -26,8 +26,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build container
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }}:test .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Inspect image
         run: |
@@ -55,8 +61,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build container
-        run: |
-          docker build -t mock-rpmbuilder:test .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: mock-rpmbuilder:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Prepare test environment
         run: |
@@ -129,8 +141,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build container
-        run: |
-          docker build -t mock-rpmbuilder:test .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: mock-rpmbuilder:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Prepare test environment
         run: |
