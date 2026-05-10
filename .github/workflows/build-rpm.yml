@@ -41,7 +41,7 @@ jobs:
       - name: Run ShellCheck on build script
         uses: ludeeus/action-shellcheck@2.0.0
         with:
-         scfile: ./build-rpm.sh
+          scfile: ./build-rpm.sh
           checkbashisms: true
 
   # Job 2: Integration test - build hello RPM on CentOS Stream 10
