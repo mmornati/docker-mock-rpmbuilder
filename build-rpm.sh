@@ -6,8 +6,12 @@ MOCK_CONF_FOLDER="/etc/mock"
 OUTPUT_FOLDER="${MOUNT_POINT}/output"
 CACHE_FOLDER="${MOUNT_POINT}/cache"
 # shellcheck disable=SC2206
-MOCK_DEFINES=(${MOCK_DEFINES})
-DEF_SIZE="${#MOCK_DEFINES[@]}"
+if [ -n "${MOCK_DEFINES}" ]; then
+  MOCK_DEFINES=(${MOCK_DEFINES})
+  DEF_SIZE="${#MOCK_DEFINES[@]}"
+else
+  DEF_SIZE=0
+fi
 
 if [ "${DEF_SIZE}" -gt 0 ]
   then
@@ -54,8 +58,7 @@ if [ -n "${HTTP_PROXY}" ] || [ -n "${http_proxy}" ]
 
     echo "Configuring http proxy to the mock build file to: ${TEMP_PROXY}"
     cp "/etc/mock/${MOCK_CONFIG}.cfg" "/tmp/$MOCK_CONFIG.cfg"
-    sed s/\\[main\\]/\[main\]\\\nproxy="${TEMP_PROXY}"/g \
-"/tmp/${MOCK_CONFIG}.cfg" > "/etc/mock/${MOCK_CONFIG}.cfg"
+    sed -i '/\[main\]/a\proxy="'"${TEMP_PROXY}"'"\n' "/tmp/${MOCK_CONFIG}.cfg" > "/etc/mock/${MOCK_CONFIG}.cfg"
 
 fi
 
