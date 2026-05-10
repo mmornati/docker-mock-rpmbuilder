@@ -28,6 +28,9 @@ rm -rf %{buildroot}
 %{_bindir}/hello
 %{_mandir}/man1/hello.1*
 %doc COPYING
+%{_infodir}/hello.info*
+%dir %attr(-, root, root) %{_datadir}/locale
+%{_datadir}/locale/*/LC_MESSAGES/hello.mo
 
 %post
 if [ -L %{_infodir}/hello.info ]
@@ -40,3 +43,7 @@ if [ $1 = 0 ]
 then
   install-info --delete %{_infodir}/hello.info %{_infodir}/dir 2>/dev/null || :
 fi
+
+%changelog
+* Sun May 10 2026 Test User <test@example.com> - 2.10-1
+- Initial package for CI testing
