@@ -36,7 +36,7 @@ jobs:
       - name: Verify Mock installation
         run: |
           docker run --rm --name mocktest ${{ env.IMAGE_NAME }}:test \
-            su - builder -c "/usr/sbin/mock --version"
+            su - mockbuilder -c "/usr/sbin/mock --version"
 
       - name: Run ShellCheck on build script
         uses: ludeeus/action-shellcheck@2.0.0
