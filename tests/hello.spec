@@ -6,7 +6,7 @@ License:        GPLv3+
 URL:            http://ftp.gnu.org/gnu/hello
 Source0:        https://ftp.gnu.org/gnu/hello/hello-%{version}.tar.gz
 
-BuildRequires:  gettext
+BuildRequires:  gettext, autoconf, automake, libtool, make, gcc
 Requires(post): info
 Requires(preun): info
 
@@ -21,6 +21,7 @@ The "Hello World" program from GNU.
 %make_build
 
 %install
+rm -rf %{buildroot}
 %make_install
 
 %files

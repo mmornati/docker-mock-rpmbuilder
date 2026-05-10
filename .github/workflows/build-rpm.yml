@@ -43,8 +43,8 @@ jobs:
         with:
           scandir: "."
 
-  # Job 2: Integration test - build hello RPM on CentOS Stream 10
-  test-centos-stream-10:
+  # Job 2: Integration test - build hello RPM on Rocky 10 x86_64
+  test-rocky-10-x86_64:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -72,7 +72,7 @@ jobs:
           docker run --rm \
             --privileged=true \
             --volume "$(pwd)/rpmbuild:/rpmbuild" \
-            -e MOCK_CONFIG="centos-stream-10-x86_64" \
+            -e MOCK_CONFIG="rocky-10-x86_64" \
             -e MOUNT_POINT="/rpmbuild" \
             -e SPEC_FILE="SPECS/hello.spec" \
             -e SOURCES="SOURCES" \
@@ -82,13 +82,13 @@ jobs:
       - name: Check build output
         run: |
           echo "=== Output directory ==="
-          ls -la rpmbuild/output/centos-stream-10-x86_64/
+          ls -la rpmbuild/output/rocky-10-x86_64/
           echo ""
           echo "=== Built RPMs ==="
           find rpmbuild/output -name "*.rpm" -type f
           echo ""
           echo "=== Build log ==="
-          cat rpmbuild/output/centos-stream-10-x86_64/build.log | tail -20
+          cat rpmbuild/output/rocky-10-x86_64/build.log | tail -20
 
       - name: Verify RPMs built
         run: |
@@ -137,7 +137,7 @@ jobs:
             --privileged=true \
             --platform linux/arm64 \
             --volume "$(pwd)/rpmbuild:/rpmbuild" \
-            -e MOCK_CONFIG="epel-10-aarch64" \
+            -e MOCK_CONFIG="rocky+epel-10-aarch64" \
             -e MOUNT_POINT="/rpmbuild" \
             -e SPEC_FILE="SPECS/hello.spec" \
             -e SOURCES="SOURCES" \
