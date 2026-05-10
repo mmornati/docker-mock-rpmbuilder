@@ -1,0 +1,50 @@
+{
+  "workflow_version": "1.2.0",
+  "timestamps": {
+    "started": "2026-05-10T10:00:00Z",
+    "last_updated": "2026-05-10T10:15:00Z",
+    "completed": "2026-05-10T10:15:00Z"
+  },
+  "mode": "initial_scan",
+  "scan_level": "deep",
+  "project_root": "/Users/mmornati/Projects/docker-mock-rpmbuilder",
+  "project_knowledge": "/Users/mmornati/Projects/docker-mock-rpmbuilder/docs",
+  "completed_steps": [
+    {"step": "step_1", "status": "completed", "timestamp": "2026-05-10T10:05:00Z", "summary": "Classified as monolith with 1 part"},
+    {"step": "step_2", "status": "completed", "timestamp": "2026-05-10T10:05:00Z", "summary": "Found 1 existing doc (README.md)"},
+    {"step": "step_3", "status": "completed", "timestamp": "2026-05-10T10:10:00Z", "summary": "Tech stack: Fedora + Mock + Bash"},
+    {"step": "step_4", "status": "completed", "timestamp": "2026-05-10T10:10:00Z", "summary": "Conditional analysis complete"},
+    {"step": "step_5", "status": "completed", "timestamp": "2026-05-10T10:10:00Z", "summary": "Source tree documented"},
+    {"step": "step_6", "status": "completed", "timestamp": "2026-05-10T10:12:00Z", "summary": "Dev/deployment guides written"},
+    {"step": "step_8", "status": "completed", "timestamp": "2026-05-10T10:13:00Z", "summary": "Architecture docs written"},
+    {"step": "step_9", "status": "completed", "timestamp": "2026-05-10T10:14:00Z", "summary": "All supporting docs written"},
+    {"step": "step_10", "status": "completed", "timestamp": "2026-05-10T10:15:00Z", "summary": "Master index generated"},
+    {"step": "step_11", "status": "completed", "timestamp": "2026-05-10T10:15:00Z", "summary": "Validation and review complete"},
+    {"step": "step_12", "status": "completed", "timestamp": "2026-05-10T10:15:00Z", "summary": "Workflow complete"}
+  ],
+  "current_step": "completed",
+  "findings": {
+    "project_classification": "Monolith, Infrastructure/DevOps, Docker container",
+    "technology_stack": {
+      "base_image": "Fedora latest",
+      "build_tools": "Mock, rpmdevtools",
+      "scripting": "Bash, Expect",
+      "emulation": "qemu-user-static"
+    }
+  },
+  "project_types": [
+    {
+      "part_id": "main",
+      "project_type_id": "infra",
+      "display_name": "Infrastructure/DevOps Tool"
+    }
+  ],
+  "outputs_generated": [
+    "project-overview.md",
+    "architecture.md",
+    "source-tree-analysis.md",
+    "development-guide.md",
+    "index.md"
+  ],
+  "resume_instructions": "Starting from step 1"
+}
